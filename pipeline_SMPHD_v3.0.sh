@@ -445,7 +445,7 @@ function LANCEMENT_QUALITY_BAM () {
 	echo -e "*******************************" >> $PREPARATION_BAM_FILE
 	echo -e " Keep only mapped\n" >> $PREPARATION_BAM_FILE
 	echo -e "samtools view -F 0x4 -@ 14 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam" >> $PREPARATION_BAM_FILE
-	samtools view -F 0x4 -h -@ 1--base-quality-score-threshold4 -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam
+	samtools view -F 0x4 -h -@ 14 -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam
 	echo -e "samtools view -f 0x800 -@ 10 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_2048.bam" >> $PREPARATION_BAM_FILE
 	samtools view -f 0x800 -@ 10 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_2048.bam
 	echo -e "*******************************" >> $PREPARATION_BAM_FILE
