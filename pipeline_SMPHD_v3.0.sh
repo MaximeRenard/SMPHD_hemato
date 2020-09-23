@@ -7,7 +7,7 @@
 # But :
 # Verification et notation de la prise en compte de NM 007313 à NM05157 de ABL1. 
 # Une réféencxe plus connue dans la littérature
-# suppresiob variable site qui ne sont plus utilisé (exac, 1000G gardé en achivvage)
+# suppresion variable site qui ne sont plus utilisé (exac, 1000G gardé en achivvage)
 echo "#############################################################"
 echo "#-----------------------------------------------------------#"
 echo "#-                                                         -#"
@@ -433,10 +433,10 @@ function LANCEMENT_QUALITY_BAM () {
 	echo -e "samtools view -@ 16 -Sh tmp/${name}.sam -bo tmp/${name}.bam" >> $PREPARATION_BAM_FILE
 	samtools view -@ 16 -Sh tmp/${name}.sam -bo tmp/${name}.bam
 	# Tri du fichier
-	echo -e "samtools sort -@ 14 tmp/${name}.bam -o tmp/${name}.sort.bam">> $PREPARATION_BAM_FILE
-	samtools sort -@ 14 tmp/${name}.bam -o tmp/${name}.sort.bam >> $PREPARATION_BAM_FILE
-	echo -e "samtools index -@ 8 -b tmp/${name}.sort.bam" >> $PREPARATION_BAM_FILE
-	samtools index -@ 8 -b tmp/${name}.sort.bam
+	echo -e "samtools sort -@ 16 tmp/${name}.bam -o tmp/${name}.sort.bam">> $PREPARATION_BAM_FILE
+	samtools sort -@ 16 tmp/${name}.bam -o tmp/${name}.sort.bam >> $PREPARATION_BAM_FILE
+	echo -e "samtools index -@ 16 -b tmp/${name}.sort.bam" >> $PREPARATION_BAM_FILE
+	samtools index -@ 16 -b tmp/${name}.sort.bam
 
 	# Vérification des reads, ils sont bien mappés?
 	total=$(samtools view -h -c tmp/${name}.sort.bam )
@@ -444,16 +444,16 @@ function LANCEMENT_QUALITY_BAM () {
 	echo -e "Total mapped: $total" >> $PREPARATION_BAM_FILE
 	echo -e "*******************************" >> $PREPARATION_BAM_FILE
 	echo -e " Keep only mapped\n" >> $PREPARATION_BAM_FILE
-	echo -e "samtools view -F 0x4 -@ 14 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam" >> $PREPARATION_BAM_FILE
-	samtools view -F 0x4 -h -@ 14 -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam
-	echo -e "samtools view -f 0x800 -@ 10 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_2048.bam" >> $PREPARATION_BAM_FILE
-	samtools view -f 0x800 -@ 10 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_2048.bam
+	echo -e "samtools view -F 0x4 -@ 16 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam" >> $PREPARATION_BAM_FILE
+	samtools view -F 0x4 -h -@ 16 -b tmp/${name}.sort.bam >tmp/${name}.sort_mapped.bam
+	echo -e "samtools view -f 0x800 -@ 16 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_2048.bam" >> $PREPARATION_BAM_FILE
+	samtools view -f 0x800 -@ 16 -h -b tmp/${name}.sort.bam >tmp/${name}.sort_2048.bam
 	echo -e "*******************************" >> $PREPARATION_BAM_FILE
-	mapped=$(samtools view -h -c tmp/${name}.sort_mapped.bam)
+	mapped=$(samtools view -h -@ 14 -c tmp/${name}.sort_mapped.bam)
 	echo -e "Only mapped $mapped" >> $PREPARATION_BAM_FILE
 	echo -e "*******************************" >> $PREPARATION_BAM_FILE
-	unmapped=$(samtools view -f 0x4 -h -@ 8 -c -b tmp/${name}.sort.bam)
-	chimeric=$(samtools view  -f 0x800 -h -@ 8 -c -b tmp/${name}.sort.bam)
+	unmapped=$(samtools view -f 0x4 -h -@ 10 -c -b tmp/${name}.sort.bam)
+	chimeric=$(samtools view  -f 0x800 -h -@ 10 -c -b tmp/${name}.sort.bam)
 	echo -e "Only unmapped: $unmapped" >> $PREPARATION_BAM_FILE
 	echo -e "Only chimeric: $chimeric" >> $PREPARATION_BAM_FILE
 	echo -e "*******************************" >> $PREPARATION_BAM_FILE
@@ -466,17 +466,17 @@ function LANCEMENT_QUALITY_BAM () {
 	# Génération des statistiques: compte rendu qualité
 	echo -e "Compte rendu qualité"
 	echo -e "samtools flagstat -@ 8 tmp/${name}-on-target.bam > tmp/${name}.bam.sort.stat" >> $PREPARATION_BAM_FILE
-	samtools flagstat -@ 8 tmp/${name}-on-target.bam > tmp/${name}.bam.sort.stat 		
+	samtools flagstat -@ 10 tmp/${name}-on-target.bam > tmp/${name}.bam.sort.stat 		
 	echo -e "Reindexation" >> $PREPARATION_BAM_FILE
 	echo -e "samtools index  -@ 8 -b tmp/${name}-on-target.bam" >> $PREPARATION_BAM_FILE
-	samtools index -@ 8 -b tmp/${name}-on-target.bam
+	samtools index -@ 14 -b tmp/${name}-on-target.bam
 
 	# Marquages des duplicates sans les enlever
 	echo -e "Marquage des duplicates" >> $PREPARATION_BAM_FILE
 	echo -e "java -jar $PICARD MarkDuplicates I= tmp/${name}-on-target.bam O=$name.sort.dupmark.bam M=$name.marked_dup.metrics.txt" >> $PREPARATION_BAM_FILE
 	java -jar $PICARD MarkDuplicates I=tmp/${name}-on-target.bam O=${name}.sort.dupmark.bam M=$name.marked_dup.metrics.txt >> $PREPARATION_BAM_FILE
 	# Reindexation
-	samtools index -@ 8 -b ${name}.sort.dupmark.bam
+	samtools index -@ 16 -b ${name}.sort.dupmark.bam
 	
 	echo "************************************" >> $PREPARATION_BAM_FILE
 	echo "Alignement pour l'échantillon $name terminé" >> $PREPARATION_BAM_FILE
