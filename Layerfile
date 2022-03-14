@@ -19,6 +19,6 @@ COPY / /root
 # See https://webapp.io/docs/advanced-workflows#logging-in-to-docker to learn how to log in to docker
 
 #RUN REPEATABLE docker-compose build --parallel
-RUN docker-compose up -d
+#RUN docker-compose up -d
 
 RUN docker-compose exec test bash /app/run_tests.sh 
