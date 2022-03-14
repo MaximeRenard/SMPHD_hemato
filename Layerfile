@@ -21,4 +21,4 @@ COPY / /root
 #RUN REPEATABLE docker-compose build --parallel
 #RUN docker-compose up -d
 
-RUN docker-compose exec test bash /app/run_tests.sh 
+#RUN docker-compose exec test bash /app/run_tests.sh 
